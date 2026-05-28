@@ -1,0 +1,21 @@
+spring:
+  autoconfigure:
+    # Exclude all Azure OpenAI autoconfigs — each one imports
+    # AzureOpenAiClientBuilderConfiguration which fails at startup when no endpoint is set.
+    # AzureOpenAiClientBuilderConfiguration itself is a @Configuration (not @AutoConfiguration)
+    # so it can't be excluded directly — block it by excluding everything that imports it.
+    exclude:
+      - org.springframework.ai.model.azure.openai.autoconfigure.AzureOpenAiChatAutoConfiguration
+      - org.springframework.ai.model.azure.openai.autoconfigure.AzureOpenAiEmbeddingAutoConfiguration
+      - org.springframework.ai.model.azure.openai.autoconfigure.AzureOpenAiImageAutoConfiguration
+      - org.springframework.ai.model.azure.openai.autoconfigure.AzureOpenAiAudioTranscriptionAutoConfiguration
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_MODEL:gemma4}
+          temperature: 0.0
+      embedding:
+        options:
+          model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}

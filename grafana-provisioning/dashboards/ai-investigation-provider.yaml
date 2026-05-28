@@ -1,0 +1,17 @@
+apiVersion: 1
+
+# Adds an extra dashboard provider on top of the LGTM defaults so we don't
+# touch any of the upstream dashboards. Reads JSON dashboards from a
+# read-only mounted directory.
+providers:
+  - name: 'AI Investigation'
+    orgId: 1
+    folder: 'AI Investigation'
+    folderUid: 'ai-investigation'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /ai-investigation-dashboards
+      foldersFromFilesStructure: false

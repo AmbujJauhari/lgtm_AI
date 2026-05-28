@@ -1,0 +1,28 @@
+{
+  "panelId": "mq_dead_letter_count",
+  "description": "Dead letter queue message count for the originating service",
+  "datasource": "IBMimir",
+  "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
+  "categories": ["MQ_ERROR"],
+  "panelJson": {
+    "type": "timeseries",
+    "title": "MQ Dead Letter Count — $service",
+    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "fieldConfig": {
+      "defaults": {
+        "unit": "short",
+        "custom": {"lineWidth": 2, "fillOpacity": 25},
+        "color": {"mode": "fixed", "fixedColor": "red"}
+      }
+    },
+    "options": {"tooltip": {"mode": "multi"}},
+    "targets": [
+      {
+        "refId": "A",
+        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "expr": "ibm_mq_dead_letter_queue_depth{appcode=\"$appcode\", service=\"$service\"}",
+        "legendFormat": "{{queue}} DLQ depth"
+      }
+    ]
+  }
+}

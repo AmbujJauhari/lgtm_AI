@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: test-data-service
+  main:
+    web-application-type: none   # command-line runner, no HTTP server needed
+
+test-data:
+  otlp-endpoint: ${OTLP_ENDPOINT:http://localhost:4318}
+  loki-url: ${LOKI_URL:http://localhost:3100}
+  atlas-export-path: ${ATLAS_EXPORT_PATH:/data/atlas/incidents.json}

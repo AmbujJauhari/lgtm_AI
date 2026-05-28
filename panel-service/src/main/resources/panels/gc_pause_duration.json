@@ -1,0 +1,27 @@
+{
+  "panelId": "gc_pause_duration",
+  "description": "JVM garbage collection pause duration for affected components",
+  "datasource": "IBMimir",
+  "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
+  "categories": ["OOM", "NPE"],
+  "panelJson": {
+    "type": "timeseries",
+    "title": "GC Pause Duration — $components",
+    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "fieldConfig": {
+      "defaults": {
+        "unit": "s",
+        "custom": {"lineWidth": 1, "fillOpacity": 10}
+      }
+    },
+    "options": {"tooltip": {"mode": "multi"}},
+    "targets": [
+      {
+        "refId": "A",
+        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "expr": "rate(jvm_gc_pause_seconds_sum{appcode=\"$appcode\", service=~\"$components\"}[5m]) / rate(jvm_gc_pause_seconds_count{appcode=\"$appcode\", service=~\"$components\"}[5m])",
+        "legendFormat": "{{service}} {{cause}} avg pause"
+      }
+    ]
+  }
+}

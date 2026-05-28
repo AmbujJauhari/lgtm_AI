@@ -1,0 +1,9 @@
+investigation:
+  tempo:
+    base-url: ${TEMPO_BASE_URL}
+  loki:
+    base-url: ${LOKI_BASE_URL}
+  grafana:
+    base-url: ${GRAFANA_BASE_URL}
+    token: ${GRAFANA_TOKEN}
+    investigation-folder-uid: ${GRAFANA_FOLDER_UID}

@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: investigation-service
+  ai:
+    mcp:
+      server:
+        name: investigation-service
+        version: 1.0.0
+        type: ASYNC
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  tracing:
+    sampling:
+      probability: 1.0
+
+investigation:
+  tempo:
+    base-url: ${TEMPO_BASE_URL:http://localhost:8089}
+    timeout-seconds: 5
+  loki:
+    base-url: ${LOKI_BASE_URL:http://localhost:8089}
+    timeout-seconds: 5
+  grafana:
+    base-url: ${GRAFANA_BASE_URL:http://localhost:3000}
+    public-base-url: ${GRAFANA_PUBLIC_BASE_URL:http://localhost:3000}
+    token: ${GRAFANA_TOKEN:mock-token}
+    investigation-folder-uid: ${GRAFANA_FOLDER_UID:mock-folder}
+  fallback:
+    enabled: true
+  panel-service:
+    base-url: ${PANEL_SERVICE_URL:http://localhost:8081}
+  neo4j:
+    uri: ${NEO4J_URI:bolt://localhost:7687}
+    username: ${NEO4J_USERNAME:neo4j}
+    password: ${NEO4J_PASSWORD:testpassword}
+  feedback:
+    base-url: ${FEEDBACK_BASE_URL:http://localhost:8080}
+  service-catalog:
+    AT4278:
+      - booking-service
+      - ledger-service
+      - position-service
+      - collateral-service
+      - margin-call-service
+      - trade-enrichment-service
+      - risk-aggregator-service
+      - margin-event-consumer
+      - trade-settlement-service
+      - pricing-service
+      - reference-data-service
+      - settlement-service

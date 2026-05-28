@@ -1,0 +1,27 @@
+{
+  "panelId": "latency_p95",
+  "description": "P95 request latency for affected components",
+  "datasource": "IBMimir",
+  "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
+  "categories": ["TIMEOUT"],
+  "panelJson": {
+    "type": "timeseries",
+    "title": "P95 Latency — $components",
+    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "fieldConfig": {
+      "defaults": {
+        "unit": "s",
+        "custom": {"lineWidth": 2, "fillOpacity": 5}
+      }
+    },
+    "options": {"tooltip": {"mode": "multi"}},
+    "targets": [
+      {
+        "refId": "A",
+        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{appcode=\"$appcode\", service=~\"$components\"}[5m])) by (le, service))",
+        "legendFormat": "{{service}} p95"
+      }
+    ]
+  }
+}

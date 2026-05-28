@@ -1,0 +1,147 @@
+{
+  "annotations": { "list": [] },
+  "description": "Browse error logs and click 🔍 on any row to launch an AI investigation.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "### 🔍 AI Log Investigation\n\nClick the **🔍** icon on any row to launch an AI investigation for that log line. The system classifies the error, queries past incidents, picks the most relevant panels, publishes a dashboard, and provides a feedback form so future investigations get smarter."
+      }
+    },
+    {
+      "id": 2,
+      "type": "table",
+      "title": "Error logs — $appcode  ·  filter: $search",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 25, "w": 24, "x": 0, "y": 3 },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{appcode=\"$appcode\"} |= \"$search\"",
+          "queryType": "range"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "labels": true,
+              "tsNs": true,
+              "labelTypes": true,
+              "trace_id": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "Line": 1,
+              "id": 2
+            },
+            "renameByName": {
+              "id": "Action"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "footer": { "show": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "filterable": true, "inspect": false }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Time" },
+            "properties": [
+              { "id": "custom.width", "value": 170 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Line" },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": { "type": "auto", "wrapText": true }
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Action" },
+            "properties": [
+              { "id": "custom.width", "value": 80 },
+              { "id": "custom.align", "value": "center" },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "regex",
+                    "options": {
+                      "pattern": ".+",
+                      "result": { "text": "🔍", "index": 0 }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Investigate with AI",
+                    "url": "http://localhost:8080/investigate?logLine=${__data.fields[\"Line\"]}",
+                    "targetBlank": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["ai-investigation"],
+  "templating": {
+    "list": [
+      {
+        "name": "appcode",
+        "label": "Appcode",
+        "type": "textbox",
+        "current": { "text": "AT4278", "value": "AT4278", "selected": true },
+        "query": "AT4278",
+        "hide": 0,
+        "skipUrlSync": false
+      },
+      {
+        "name": "search",
+        "label": "Filter (LogQL |= ...)",
+        "type": "textbox",
+        "current": { "text": "ERROR", "value": "ERROR", "selected": true },
+        "query": "ERROR",
+        "hide": 0,
+        "skipUrlSync": false
+      }
+    ]
+  },
+  "time": { "from": "now-2h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "AI Log Investigation",
+  "uid": "ai-log-investigation",
+  "version": 1,
+  "weekStart": ""
+}

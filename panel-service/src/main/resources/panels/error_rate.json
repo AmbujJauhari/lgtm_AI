@@ -1,0 +1,28 @@
+{
+  "panelId": "error_rate",
+  "description": "HTTP 5xx error rate per second for all affected components",
+  "datasource": "IBMimir",
+  "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
+  "categories": ["ALL"],
+  "panelJson": {
+    "type": "timeseries",
+    "title": "Error Rate — $components",
+    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "fieldConfig": {
+      "defaults": {
+        "unit": "reqps",
+        "custom": {"lineWidth": 2, "fillOpacity": 20},
+        "color": {"mode": "fixed", "fixedColor": "red"}
+      }
+    },
+    "options": {"tooltip": {"mode": "multi"}},
+    "targets": [
+      {
+        "refId": "A",
+        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "expr": "sum(rate(http_server_requests_seconds_count{appcode=\"$appcode\", service=~\"$components\", status=~\"5..\"}[5m])) by (service)",
+        "legendFormat": "{{service}} errors/s"
+      }
+    ]
+  }
+}

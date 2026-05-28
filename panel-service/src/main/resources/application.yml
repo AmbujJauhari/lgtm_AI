@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: panel-service
+  ai:
+    mcp:
+      server:
+        name: panel-service
+        version: 1.0.0
+        type: ASYNC
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
