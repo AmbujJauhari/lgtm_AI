@@ -1,13 +1,13 @@
 {
   "panelId": "log_stream",
   "description": "Log stream filtered to ERROR level for the originating service",
-  "datasource": "IBLoki",
+  "datasource": "${ds_loki}",
   "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
   "categories": ["ALL"],
   "panelJson": {
     "type": "logs",
     "title": "Logs — $service",
-    "datasource": {"type": "loki", "uid": "IBLoki"},
+    "datasource": {"type": "loki", "uid": "${ds_loki}"},
     "options": {
       "dedupStrategy": "none",
       "showLabels": false,
@@ -18,7 +18,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "loki", "uid": "IBLoki"},
+        "datasource": {"type": "loki", "uid": "${ds_loki}"},
         "expr": "{appcode=\"$appcode\", service=\"$service\"} |= \"ERROR\"",
         "queryType": "range"
       }

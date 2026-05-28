@@ -39,6 +39,10 @@ investigation:
     password: ${NEO4J_PASSWORD:testpassword}
   feedback:
     base-url: ${FEEDBACK_BASE_URL:http://localhost:8080}
+  datasources:
+    loki: ${LOKI_DS_UID:loki}
+    tempo: ${TEMPO_DS_UID:tempo}
+    prometheus: ${PROMETHEUS_DS_UID:prometheus}
   service-catalog:
     AT4278:
       - booking-service

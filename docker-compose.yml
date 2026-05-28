@@ -3,16 +3,34 @@
 # Start everything:
 #   docker compose up
 #
-# Re-push test data (e.g. after a Grafana restart):
+# Full ephemeral reset (wipes ALL state — Neo4j graph, Loki history,
+# Tempo traces, Grafana DB, atlas data, named volumes — and starts fresh):
+#   ./reset.sh         # Linux/macOS
+#   .\reset.ps1        # Windows
+#
+# Re-push test data only (logs/traces/metrics — keeps Neo4j graph):
 #   docker compose restart test-data-service
+#
+# Re-index Neo4j graph only (after prompt/embedding changes):
+#   ./reindex.sh       # Linux/macOS
+#   .\reindex.ps1      # Windows
 #
 # Run investigation-service unit tests only:
 #   docker compose --profile test run --rm test
 #
-# Prerequisites: Ollama running locally on port 11434 (gemma4 model pulled).
-# All containers are ephemeral — no application data is persisted.
-# The maven-cache volume is build infrastructure only.
-# Remove it with: docker volume rm lgtm_ai_maven-cache
+# Prerequisites: Ollama running locally on port 11434 (gemma4 + nomic-embed-text).
+#
+# Ephemerality story:
+#   - Neo4j graph data + LGTM (Loki/Tempo/Prometheus/Grafana) data live INSIDE
+#     each container's filesystem — no host mount, no named volume. Removing
+#     the container (`docker compose down`) wipes all of it.
+#   - `atlas-data` is the only named volume — gets overwritten each time
+#     test-data-service starts, so contents are deterministic.
+#   - `maven-cache` is a build-infra-only volume for the test profile, kept
+#     across resets for speed. Remove with: docker volume rm lgtm_ai_maven-cache
+#   - No host bind-mounts for data — nothing leaks onto your filesystem.
+#   - `./reset.sh` does `docker compose down -v` then `up` for a guaranteed
+#     fresh slate.
 #
 # Endpoints once up:
 #   Grafana UI             — http://localhost:3000   (admin / admin)

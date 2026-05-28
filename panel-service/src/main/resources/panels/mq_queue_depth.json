@@ -1,13 +1,13 @@
 {
   "panelId": "mq_queue_depth",
   "description": "Message queue depth over time for the originating service",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
   "categories": ["MQ_ERROR"],
   "panelJson": {
     "type": "timeseries",
     "title": "MQ Queue Depth — $service",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "short",
@@ -18,13 +18,13 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "ibm_mq_queue_depth{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{queue}} depth"
       },
       {
         "refId": "B",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "ibm_mq_queue_max_depth{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{queue}} max depth"
       }

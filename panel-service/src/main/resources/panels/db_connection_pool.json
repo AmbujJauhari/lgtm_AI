@@ -1,13 +1,13 @@
 {
   "panelId": "db_connection_pool",
   "description": "Database connection pool utilisation for the originating service",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
   "categories": ["DB_ERROR"],
   "panelJson": {
     "type": "timeseries",
     "title": "DB Connection Pool — $service",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "short",
@@ -18,19 +18,19 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "hikaricp_connections_active{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{service}} active"
       },
       {
         "refId": "B",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "hikaricp_connections_pending{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{service}} pending"
       },
       {
         "refId": "C",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "hikaricp_connections_max{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{service}} max"
       }

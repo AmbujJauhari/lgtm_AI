@@ -80,6 +80,8 @@ public class DashboardAssemblyService {
         time.put("from", resolveTimeFrom(selectedPanels));
         time.put("to", resolveTimeTo(selectedPanels));
 
+        addDatasourceTemplatingVariables(dashboard);
+
         ArrayNode panelsArray = dashboard.putArray("panels");
         panelsArray.add(buildFeedbackPanel(uid, panelId(1)));
 
@@ -92,7 +94,10 @@ public class DashboardAssemblyService {
                 log.warn("Unknown panelId '{}' from LLM — skipping", selected.panelId());
                 continue;
             }
-            JsonNode injected = variableInjector.inject(template.panelJson(), selected.variables());
+            // Panel queries use service=~"$components" (regex match) so the components value
+            // must be pipe-separated for alternation. LLM emits comma-separated by convention.
+            Map<String, String> variables = normalizeComponentsForRegex(selected.variables());
+            JsonNode injected = variableInjector.inject(template.panelJson(), variables);
             ObjectNode panel = (ObjectNode) injected.deepCopy();
             panel.put("id", nextId++);
 
@@ -109,6 +114,39 @@ public class DashboardAssemblyService {
         log.info("Assembled dashboard '{}' with {} panels (+ feedback)",
                 selection.dashboardTitle(), panelsArray.size() - 1);
         return dashboard;
+    }
+
+    /**
+     * Adds {@code ds_loki}, {@code ds_tempo}, {@code ds_prometheus} as Grafana
+     * datasource-type templating variables, defaulting to the configured UIDs.
+     * Panel templates reference these via {@code ${ds_loki}}, etc., so the same
+     * dashboard works against any Loki/Tempo/Prometheus datasource — the L2 can
+     * switch from the dashboard variable bar in Grafana.
+     */
+    private void addDatasourceTemplatingVariables(ObjectNode dashboard) {
+        InvestigationProperties.DatasourceProperties ds = properties.datasources();
+        if (ds == null) return;
+        ObjectNode templating = dashboard.putObject("templating");
+        ArrayNode list = templating.putArray("list");
+        list.add(buildDatasourceVariable("ds_loki", "loki", ds.loki()));
+        list.add(buildDatasourceVariable("ds_tempo", "tempo", ds.tempo()));
+        list.add(buildDatasourceVariable("ds_prometheus", "prometheus", ds.prometheus()));
+    }
+
+    private ObjectNode buildDatasourceVariable(String name, String pluginId, String defaultUid) {
+        ObjectNode var = objectMapper.createObjectNode();
+        var.put("name", name);
+        var.put("type", "datasource");
+        var.put("query", pluginId);
+        var.put("hide", 2);                  // hide entirely from the variable bar
+        var.put("refresh", 1);
+        var.put("includeAll", false);
+        var.put("multi", false);
+        ObjectNode current = var.putObject("current");
+        current.put("text", defaultUid);
+        current.put("value", defaultUid);
+        current.put("selected", true);
+        return var;
     }
 
     private void addTags(ObjectNode dashboard, InvestigationState state) {
@@ -148,6 +186,16 @@ public class DashboardAssemblyService {
     }
 
     private int panelId(int id) { return id; }
+
+    private Map<String, String> normalizeComponentsForRegex(Map<String, String> in) {
+        if (in == null) return java.util.Map.of();
+        Map<String, String> out = new java.util.HashMap<>(in);
+        String components = out.get("components");
+        if (components != null && components.contains(",")) {
+            out.put("components", components.replaceAll("\\s*,\\s*", "|"));
+        }
+        return out;
+    }
 
     private List<PanelSelectionResult.SelectedPanel> reorderLogStreamFirst(
             List<PanelSelectionResult.SelectedPanel> panels) {

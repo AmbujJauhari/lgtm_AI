@@ -1,13 +1,13 @@
 {
   "panelId": "thread_pool_active",
   "description": "Active thread count across executor pools for affected components",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
   "categories": ["THREAD_DEADLOCK", "NPE"],
   "panelJson": {
     "type": "timeseries",
     "title": "Thread Pool Active — $components",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "short",
@@ -18,7 +18,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "executor_active_threads{appcode=\"$appcode\", service=~\"$components\"}",
         "legendFormat": "{{service}}/{{name}}"
       }

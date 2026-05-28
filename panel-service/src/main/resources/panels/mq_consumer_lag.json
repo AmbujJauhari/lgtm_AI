@@ -1,13 +1,13 @@
 {
   "panelId": "mq_consumer_lag",
   "description": "Message queue consumer lag (unprocessed messages) for the originating service",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
   "categories": ["MQ_ERROR"],
   "panelJson": {
     "type": "timeseries",
     "title": "MQ Consumer Lag — $service",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "short",
@@ -19,7 +19,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "ibm_mq_consumer_lag{appcode=\"$appcode\", service=\"$service\"}",
         "legendFormat": "{{queue}} lag"
       }

@@ -8,3 +8,7 @@ test-data:
   otlp-endpoint: ${OTLP_ENDPOINT:http://localhost:4318}
   loki-url: ${LOKI_URL:http://localhost:3100}
   atlas-export-path: ${ATLAS_EXPORT_PATH:/data/atlas/incidents.json}
+  # AT4278 is the umbrella appcode for the whole platform.
+  # Individual services within it (collateral-service, ledger-service, etc.)
+  # are identified by the `service` label, NOT by separate appcodes.
+  appcode: ${APPCODE:AT4278}

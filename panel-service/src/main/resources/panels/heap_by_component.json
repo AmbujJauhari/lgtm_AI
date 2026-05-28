@@ -1,13 +1,13 @@
 {
   "panelId": "heap_by_component",
   "description": "JVM heap usage over time for all affected components",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
   "categories": ["NPE", "OOM", "THREAD_DEADLOCK"],
   "panelJson": {
     "type": "timeseries",
     "title": "Heap Usage — $components",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "bytes",
@@ -18,7 +18,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "jvm_memory_used_bytes{appcode=\"$appcode\", area=\"heap\", service=~\"$components\"}",
         "legendFormat": "{{service}} heap"
       }

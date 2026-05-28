@@ -20,6 +20,7 @@ class Neo4jConfigTest {
                 new InvestigationProperties.PanelServiceProperties("http://localhost:8081"),
                 new InvestigationProperties.Neo4jProperties("bolt://localhost:7687", "neo4j", "test"),
                 new InvestigationProperties.FeedbackProperties("http://localhost:8080"),
+                new InvestigationProperties.DatasourceProperties("loki", "tempo", "prometheus"),
                 Map.of());
 
         Driver driver = config.neo4jDriver(properties);

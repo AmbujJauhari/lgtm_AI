@@ -6,5 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record TestDataProperties(
     String otlpEndpoint,
     String lokiUrl,
-    String atlasExportPath
+    String atlasExportPath,
+    String appcode
 ) {}

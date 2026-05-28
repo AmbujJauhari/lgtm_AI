@@ -1,13 +1,13 @@
 {
   "panelId": "db_query_latency",
   "description": "Database query latency P99 for the originating service",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["service", "appcode", "timeFrom", "timeTo"],
   "categories": ["DB_ERROR"],
   "panelJson": {
     "type": "timeseries",
     "title": "DB Query Latency — $service",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "s",
@@ -18,7 +18,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "histogram_quantile(0.99, sum(rate(spring_data_repository_invocations_seconds_bucket{appcode=\"$appcode\", service=\"$service\"}[5m])) by (le, repository))",
         "legendFormat": "{{repository}} p99"
       }

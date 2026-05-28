@@ -28,9 +28,11 @@ public class TraceGenerator {
     private static final AttributeKey<String> APPCODE = AttributeKey.stringKey("appcode");
 
     private final String otlpEndpoint;
+    private final String appcode;
 
     public TraceGenerator(TestDataProperties properties) {
         this.otlpEndpoint = properties.otlpEndpoint() + "/v1/traces";
+        this.appcode = properties.appcode();
     }
 
     // Returns map: scenario name → trace ID (32-char hex, embeddable in log lines)
@@ -47,7 +49,7 @@ public class TraceGenerator {
 
     // Single span — collateral-service only, NullPointerException
     private String npeTrace() {
-        try (var sdk = buildSdk("collateral-service", "COLL")) {
+        try (var sdk = buildSdk("collateral-service", appcode)) {
             Tracer tracer = sdk.getTracer("test-data-generator");
             Span span = tracer.spanBuilder("CollateralCalculator.calculateInitialMargin")
                     .setAttribute("exception.type", "java.lang.NullPointerException")
@@ -68,9 +70,8 @@ public class TraceGenerator {
         Map<String, SdkTracerProvider> providers = new HashMap<>();
         try {
             String[] services = {"margin-call-service", "collateral-service", "trade-enrichment-service", "position-service"};
-            String[] appcodes = {"MRGN", "COLL", "TRADE", "POS"};
-            for (int i = 0; i < services.length; i++) {
-                providers.put(services[i], buildProvider(services[i], appcodes[i], exporter));
+            for (String svc : services) {
+                providers.put(svc, buildProvider(svc, appcode, exporter));
             }
 
             Tracer marginTracer = providers.get("margin-call-service").get("test-data-generator");
@@ -113,7 +114,7 @@ public class TraceGenerator {
 
     // Single span — trade-enrichment-service, Sybase connection error
     private String dbErrorTrace() {
-        try (var sdk = buildSdk("trade-enrichment-service", "TRADE")) {
+        try (var sdk = buildSdk("trade-enrichment-service", appcode)) {
             Tracer tracer = sdk.getTracer("test-data-generator");
             Span span = tracer.spanBuilder("TradeRepository.findByTradeId")
                     .setAttribute("exception.type", "com.sybase.jdbc4.jdbc.SybSQLException")
@@ -133,9 +134,9 @@ public class TraceGenerator {
         OtlpHttpSpanExporter exporter = buildExporter();
         Map<String, SdkTracerProvider> providers = new HashMap<>();
         try {
-            providers.put("margin-event-consumer", buildProvider("margin-event-consumer", "MRGN", exporter));
-            providers.put("margin-call-service", buildProvider("margin-call-service", "MRGN", exporter));
-            providers.put("settlement-service", buildProvider("settlement-service", "SETL", exporter));
+            providers.put("margin-event-consumer", buildProvider("margin-event-consumer", appcode, exporter));
+            providers.put("margin-call-service", buildProvider("margin-call-service", appcode, exporter));
+            providers.put("settlement-service", buildProvider("settlement-service", appcode, exporter));
 
             Tracer consumerTracer = providers.get("margin-event-consumer").get("test-data-generator");
             Tracer marginTracer = providers.get("margin-call-service").get("test-data-generator");

@@ -18,15 +18,18 @@ public class TestDataRunner implements ApplicationRunner {
 
     private final TraceGenerator traceGenerator;
     private final LokiLogGenerator lokiLogGenerator;
+    private final MetricsGenerator metricsGenerator;
     private final AtlasIncidentsExporter atlasIncidentsExporter;
     private final TestDataProperties properties;
 
     public TestDataRunner(TraceGenerator traceGenerator,
                           LokiLogGenerator lokiLogGenerator,
+                          MetricsGenerator metricsGenerator,
                           AtlasIncidentsExporter atlasIncidentsExporter,
                           TestDataProperties properties) {
         this.traceGenerator = traceGenerator;
         this.lokiLogGenerator = lokiLogGenerator;
+        this.metricsGenerator = metricsGenerator;
         this.atlasIncidentsExporter = atlasIncidentsExporter;
         this.properties = properties;
     }
@@ -42,6 +45,9 @@ public class TestDataRunner implements ApplicationRunner {
         log.info("Pushing test scenarios — 5 error types across 9 services");
         Map<String, String> traceIds = traceGenerator.generateAll();
         lokiLogGenerator.pushAll(traceIds);
+
+        log.info("Pushing baseline metrics for panel data (~30s)...");
+        metricsGenerator.pushAll();
 
         log.info("""
 

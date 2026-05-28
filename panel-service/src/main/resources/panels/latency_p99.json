@@ -1,13 +1,13 @@
 {
   "panelId": "latency_p99",
   "description": "P99 request latency for affected components",
-  "datasource": "IBMimir",
+  "datasource": "${ds_prometheus}",
   "requiredVariables": ["components", "appcode", "timeFrom", "timeTo"],
   "categories": ["TIMEOUT", "CONNECTION_REFUSED"],
   "panelJson": {
     "type": "timeseries",
     "title": "P99 Latency — $components",
-    "datasource": {"type": "prometheus", "uid": "IBMimir"},
+    "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
     "fieldConfig": {
       "defaults": {
         "unit": "s",
@@ -18,7 +18,7 @@
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "prometheus", "uid": "IBMimir"},
+        "datasource": {"type": "prometheus", "uid": "${ds_prometheus}"},
         "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{appcode=\"$appcode\", service=~\"$components\"}[5m])) by (le, service))",
         "legendFormat": "{{service}} p99"
       }

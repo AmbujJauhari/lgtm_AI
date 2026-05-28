@@ -46,6 +46,7 @@ class GrafanaDashboardReaderTest {
                 new InvestigationProperties.PanelServiceProperties("http://localhost"),
                 new InvestigationProperties.Neo4jProperties("bolt://localhost", "n", "p"),
                 new InvestigationProperties.FeedbackProperties("http://localhost"),
+                new InvestigationProperties.DatasourceProperties("loki", "tempo", "prometheus"),
                 Map.of());
         reader = new GrafanaDashboardReader(WebClient.builder(), props, new ObjectMapper());
     }

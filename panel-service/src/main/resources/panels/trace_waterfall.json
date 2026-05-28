@@ -1,20 +1,20 @@
 {
   "panelId": "trace_waterfall",
   "description": "Distributed trace waterfall showing full request chain for the error trace",
-  "datasource": "IBTempo",
+  "datasource": "${ds_tempo}",
   "requiredVariables": ["traceId"],
   "categories": ["TIMEOUT", "MQ_ERROR", "CONNECTION_REFUSED", "UNKNOWN"],
   "panelJson": {
     "type": "traces",
     "title": "Trace Waterfall — $traceId",
-    "datasource": {"type": "tempo", "uid": "IBTempo"},
+    "datasource": {"type": "tempo", "uid": "${ds_tempo}"},
     "options": {
       "createSpanLink": {}
     },
     "targets": [
       {
         "refId": "A",
-        "datasource": {"type": "tempo", "uid": "IBTempo"},
+        "datasource": {"type": "tempo", "uid": "${ds_tempo}"},
         "queryType": "traceql",
         "query": "{traceID=\"$traceId\"}"
       }

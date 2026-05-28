@@ -14,6 +14,7 @@ public record InvestigationProperties(
     PanelServiceProperties panelService,
     Neo4jProperties neo4j,
     FeedbackProperties feedback,
+    DatasourceProperties datasources,
     Map<String, List<String>> serviceCatalog
 ) {
     public record TempoProperties(String baseUrl, int timeoutSeconds) {}
@@ -34,4 +35,12 @@ public record InvestigationProperties(
     public record PanelServiceProperties(String baseUrl) {}
     public record Neo4jProperties(String uri, String username, String password) {}
     public record FeedbackProperties(String baseUrl) {}
+
+    /**
+     * Default Grafana datasource UIDs injected into every generated dashboard
+     * as templating variables ({@code ${ds_loki}}, {@code ${ds_tempo}},
+     * {@code ${ds_prometheus}}). The L2 can switch datasources from the
+     * dashboard UI without us republishing.
+     */
+    public record DatasourceProperties(String loki, String tempo, String prometheus) {}
 }
